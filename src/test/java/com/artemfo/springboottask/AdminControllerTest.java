@@ -51,7 +51,7 @@ public class AdminControllerTest {
 
     @Test
     public void addUser() throws Exception {
-        MockHttpServletRequestBuilder multipart = multipart("/signup")
+        MockHttpServletRequestBuilder multipart = multipart("/profiles")
                 .param("name", "mockUser")
                 .param("email", "m@m.m")
                 .param("password", "123456789")
@@ -60,7 +60,7 @@ public class AdminControllerTest {
                 .andDo(print())
                 .andExpect(authenticated())
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/profile"));
+                .andExpect(redirectedUrl("/profiles"));
         assertThat(adminService.loadUserByUsername("mockUser")).isNotNull();
     }
 

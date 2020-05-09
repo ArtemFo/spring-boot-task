@@ -7,11 +7,10 @@
 <body>
 <header th:replace="~{fragments/header}">
 </header>
-<section class="form-container text-center mt-n2 h-auto">
+<section class="container text-center mt-n2 h-auto">
     <div class="form-signin">
-        <div th:if="${notEditable}" th:text="#{message.notEditable}" class="alert alert-danger" role="alert">
-        </div>
-
+        <div th:if="${notEditable}" th:text="#{message.notEditable}" class="alert alert-danger" role="alert"></div>
+        <div th:if="${emailExists}" th:text="#{message.emailExists}" class="alert alert-danger" role="alert"></div>
         <div class="py-1 text-center">
             <h2>[[${#httpServletRequest.remoteUser}]] profile</h2>
         </div>

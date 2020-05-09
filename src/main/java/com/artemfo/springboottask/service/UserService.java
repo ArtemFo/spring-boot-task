@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Collections;
+import java.util.List;
 
 @Service
 @Slf4j
@@ -20,10 +21,12 @@ public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final ServiceUtils serviceUtils;
 
-    public UserService(UserRepository repository, @Lazy PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository repository, @Lazy PasswordEncoder passwordEncoder, ServiceUtils serviceUtils) {
         this.userRepository = repository;
         this.passwordEncoder = passwordEncoder;
+        this.serviceUtils = serviceUtils;
     }
 
     @Override
@@ -31,35 +34,31 @@ public class UserService implements UserDetailsService {
         return userRepository.findByName(username);
     }
 
-    public boolean addUser(User user, HttpServletRequest request) {
-        User userFromDb = userRepository.findByName(user.getName());
-        log.info("findByName " + userFromDb);
-        if (userFromDb != null) {
-            return false;
+    public List<String> addUser(User user, HttpServletRequest request) {
+        List<String> errors = serviceUtils.validateUniqueFields(user);
+        if (errors.isEmpty()) {
+            user.setEmail(user.getEmail().toLowerCase());
+            user.setActive(true);
+            user.setRoles(Collections.singleton(Role.USER));
+            user.setIp(ServiceUtils.getIPForRegistered(request));
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+            userRepository.save(user);
+            log.info("addUser " + user);
+            return null;
         }
-        user.setActive(true);
-        user.setRoles(Collections.singleton(Role.USER));
-        user.setIp(getIPForRegistered(request));
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        userRepository.save(user);
-        log.info("addUser " + user);
-        return true;
+        return errors;
     }
 
-    public User update(User updUser, User authUser) {
-        authUser.setEmail(updUser.getEmail().toLowerCase());
-        authUser.setPassword(passwordEncoder.encode(updUser.getPassword()));
-        authUser.setTimezone(updUser.getTimezone());
-        userRepository.save(authUser);
-        log.info("save " + updUser);
-        return authUser;
+    public String update(User updUser, User authUser) {
+        if (serviceUtils.validateEmailForUpdate(updUser, authUser)) {
+            authUser.setEmail(updUser.getEmail().toLowerCase());
+            authUser.setPassword(passwordEncoder.encode(updUser.getPassword()));
+            authUser.setTimezone(updUser.getTimezone());
+            userRepository.save(authUser);
+            log.info("save " + updUser);
+            return null;
+        }
+        return "emailExists";
     }
 
-    public static String getIPForRegistered(HttpServletRequest request) {
-        String ipAddress = request.getHeader("X-FORWARDED-FOR");
-        if (ipAddress == null) {
-            ipAddress = request.getRemoteAddr();
-        }
-        return ipAddress;
-    }
 }

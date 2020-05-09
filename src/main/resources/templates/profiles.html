@@ -8,20 +8,31 @@
 <header th:replace="~{fragments/header}">
 </header>
 <section class="container">
-    <form th:action="@{/signup}" method="post">
+    <div th:if="${userExists}" th:text="#{message.userExists}" class="alert alert-danger" role="alert"></div>
+    <div th:if="${emailExists}" th:text="#{message.emailExists}" class="alert alert-danger" role="alert"></div>
+    <form th:action="@{/profiles}" th:method="post" th:object="${user}">
         <div class="row">
             <div class="col-md-3 mb-3">
                 <label for="inputName" th:text="#{form.name}">User Name</label>
-                <input type="text" class="form-control" id="inputName" name="name" placeholder="" required="true"/>
+                <input type="text" class="form-control" id="inputName" th:field="*{name}" placeholder=""
+                       required="true"/>
+                <div th:if="${#fields.hasErrors('name')}" th:errors="*{name}" class="invalid-feedback mb-3"
+                     style="display: block"></div>
             </div>
             <div class="col-md-3 mb-3">
                 <label for="inputEmail" th:text="#{form.email}">Email</label>
-                <input type="email" class="form-control" id="inputEmail" name="email" placeholder="" required="true"/>
+                <input type="email" class="form-control" id="inputEmail" th:field="*{email}" placeholder=""
+                       required="true"/>
+                <div th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="invalid-feedback mb-3"
+                     style="display: block"></div>
             </div>
             <div class="col-md-3 mb-3">
                 <label for="inputPassword" th:text="#{form.password}">Password</label>
-                <input type="password" class="form-control" id="inputPassword" name="password" placeholder=""
+                <input type="password" class="form-control" id="inputPassword" th:field="*{password}" placeholder=""
                        required="true"/>
+                <div th:if="${#fields.hasErrors('password')}" th:errors="*{password}" class="invalid-feedback mb-3"
+                     style="display: block">
+                </div>
             </div>
             <div class="col-md-3 mb-3">
                 <label></label>
@@ -69,7 +80,7 @@
     </table>
     <hr class="mb-4"/>
 
-    <p class="lead" th:text="#{table.cantedit}">
+    <p class="text-danger" style="font-size: 1.2rem;" th:text="#{table.cantedit}">
         Cant edit "AdminTest" and "UserTest" profile
     </p>
 </section>

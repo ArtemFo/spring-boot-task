@@ -4,13 +4,13 @@
     <div th:replace="~{fragments/headTag}"></div>
     <link rel="stylesheet" href="/static/css/signin.css">
 </head>
-<body>
+<body class="bg-light">
 <header th:replace="~{fragments/header}">
 </header>
-<section class="form-container text-center mt-n2 h-auto">
+<section class="container text-center mt-n2 h-auto">
     <div class="form-signin">
-        <div th:if="${userExists}" th:text="#{message.userExists}" class="alert alert-danger" role="alert">
-        </div>
+        <div th:if="${userExists}" th:text="#{message.userExists}" class="alert alert-danger" role="alert"></div>
+        <div th:if="${emailExists}" th:text="#{message.emailExists}" class="alert alert-danger" role="alert"></div>
         <form class="needs-validation" th:action="@{/signup}" th:object="${user}" method="post">
             <h1 class="h3 mb-3 font-weight-normal" th:text="#{app.newuser}">New user</h1>
             <div>
@@ -41,7 +41,6 @@
         </form>
         <p class="mt-5 mb-3 text-muted">© 2020</p>
     </div>
-
 </section>
 
 <div th:replace="~{fragments/scripts}"></div>

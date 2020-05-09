@@ -16,10 +16,12 @@ public class AdminService implements UserDetailsService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final ServiceUtils serviceUtils;
 
-    public AdminService(UserRepository repository, @Lazy PasswordEncoder passwordEncoder) {
+    public AdminService(UserRepository repository, @Lazy PasswordEncoder passwordEncoder, ServiceUtils serviceUtils) {
         this.userRepository = repository;
         this.passwordEncoder = passwordEncoder;
+        this.serviceUtils = serviceUtils;
     }
 
     @Override
@@ -32,16 +34,19 @@ public class AdminService implements UserDetailsService {
         return userRepository.findAll();
     }
 
-    public User update(User user) {
+    public String update(User user) {
         User userFromDB = userRepository.findById(user.getId()).get();
-        userFromDB.setRoles(user.getRoles());
-        userFromDB.setEmail(user.getEmail().toLowerCase());
-        userFromDB.setPassword(passwordEncoder.encode(user.getPassword()));
-        userFromDB.setTimezone(user.getTimezone());
-        userFromDB.setActive(user.isActive());
-        userRepository.save(userFromDB);
-        log.info("save " + userFromDB);
-        return userFromDB;
+        if (serviceUtils.validateEmailForUpdate(user, userFromDB)) {
+            userFromDB.setRoles(user.getRoles());
+            userFromDB.setEmail(user.getEmail().toLowerCase());
+            userFromDB.setPassword(passwordEncoder.encode(user.getPassword()));
+            userFromDB.setTimezone(user.getTimezone());
+            userFromDB.setActive(user.isActive());
+            userRepository.save(userFromDB);
+            log.info("save " + userFromDB);
+            return null;
+        }
+        return "emailExists";
     }
 
     public void delete(Long id) {

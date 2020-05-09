@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.util.List;
 
 @Controller
 public class UserController {
@@ -28,16 +29,16 @@ public class UserController {
     }
 
     @PostMapping("/signup")
-    public String addUser(@Valid User user, BindingResult result, Model model, HttpServletRequest request) {
+    public String addUser(@Valid User user, BindingResult result, Model model, HttpServletRequest request, @AuthenticationPrincipal User authUser) {
         if (result.hasErrors()) {
             return "signUp";
         }
-        if (!userService.addUser(user, request)) {
-            model.addAttribute("userExists", "");
+        List<String> errors = userService.addUser(user, request);
+        if (errors != null) {
+            errors.forEach(error -> model.addAttribute(error, ""));
             return "signUp";
         }
-        model.addAttribute("userAdded", "");
-        return "redirect:/profile";
+        return "redirect:/profileuser";
     }
 
     @GetMapping("/profileuser")
@@ -55,7 +56,11 @@ public class UserController {
             model.addAttribute("notEditable", "");
             return "profileUser";
         }
-        userService.update(user, authUser);
-        return "redirect:/profile";
+        String error = userService.update(user, authUser);
+        if (error != null) {
+            model.addAttribute(error, "");
+            return "profileUser";
+        }
+        return "redirect:/profileuser";
     }
 }
