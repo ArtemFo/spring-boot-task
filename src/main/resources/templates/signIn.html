@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <div th:replace="~{fragments/headTag}"></div>
+    <link rel="stylesheet" href="/static/css/signin.css">
+</head>
+<body>
+<section class="form-container text-center">
+    <div class="form-signin">
+        <div th:if="${param.error}" th:text="#{param.error}" class="alert alert-danger" role="alert">
+            Invalid username and password.
+        </div>
+        <div th:if="${param.logout}" th:text="#{param.logout}" class="alert alert-primary" role="alert">
+            You have been logged out.
+        </div>
+        <form class="" th:action="@{/login}" method="post">
+            <h1 class="h3 mb-3 font-weight-normal" th:text="#{signin.please}">Please sign in</h1>
+            <label for="inputName" class="sr-only" th:text="#{form.name}">User name</label>
+            <input type="text" id="inputName" class="form-control" th:placeholder="#{form.name}" required="true"
+                   autofocus=""
+                   name="username">
+            <label for="inputPassword" class="sr-only" th:text="#{form.password}">Password</label>
+            <input type="password" id="inputPassword" class="form-control" th:placeholder="#{form.password}"
+                   required="true"
+                   name="password">
+            <button class="btn btn-lg btn-primary btn-block" type="submit" th:text="#{btn.signin}">Sign in</button>
+
+
+        </form>
+        <form action="/signup">
+            <button class="btn btn-lg btn-secondary btn-block mt-2" th:text="#{btn.signup}">Sign up</button>
+        </form>
+
+        <h6 class="mt-4 mb-0">User</h6>
+        <p>name: <em>UserTest</em>, password: <em>password1</em></p>
+        <h6 class="mt-4 mb-0">Admin</h6>
+        <p>name: <em>AdminTest</em>, password: <em>password2</em></p>
+    </div>
+
+</section>
+
+<div th:replace="~{fragments/scripts}"></div>
+</body>
+</html>

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <div th:replace="~{fragments/headTag}"></div>
+    <link rel="stylesheet" href="webjars/datatables/1.10.20/css/jquery.dataTables.min.css"/>
+</head>
+<body>
+<header th:replace="~{fragments/header}">
+</header>
+<section class="container">
+    <form th:action="@{/signup}" method="post">
+        <div class="row">
+            <div class="col-md-3 mb-3">
+                <label for="inputName" th:text="#{form.name}">User Name</label>
+                <input type="text" class="form-control" id="inputName" name="name" placeholder="" required="true"/>
+            </div>
+            <div class="col-md-3 mb-3">
+                <label for="inputEmail" th:text="#{form.email}">Email</label>
+                <input type="email" class="form-control" id="inputEmail" name="email" placeholder="" required="true"/>
+            </div>
+            <div class="col-md-3 mb-3">
+                <label for="inputPassword" th:text="#{form.password}">Password</label>
+                <input type="password" class="form-control" id="inputPassword" name="password" placeholder=""
+                       required="true"/>
+            </div>
+            <div class="col-md-3 mb-3">
+                <label></label>
+                <button type="submit" class="btn btn-primary btn-lg btn-block" th:text="#{btn.adduser}">Add user
+                </button>
+            </div>
+        </div>
+    </form>
+    <hr class="mb-4"/>
+    <table id="myTable" class="table table-hover">
+        <thead>
+        <tr>
+            <th th:text="#{table.id}">ID</th>
+            <th th:text="#{table.name}">Name</th>
+            <th th:text="#{table.email}">Email</th>
+            <th th:text="#{table.role}">Role</th>
+            <th th:text="#{table.active}">Active</th>
+            <th th:text="#{table.ip}">IP</th>
+            <th th:text="#{table.timezone}">TimeZone</th>
+            <th></th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="user : ${users}" id="users_list">
+            <td th:text="${user.id}">MyID</td>
+            <td th:text="${user.name}">MyName</td>
+            <td th:text="${user.email}">MyMail</td>
+            <td th:text="${user.roles}">MyRole</td>
+            <td th:text="${user.active}">IsActive</td>
+            <td th:text="${user.ip}">0.0.0.0</td>
+            <td th:text="${user.timezone}">MyTZ</td>
+            <td>
+                <a th:if="${user.id}>2" class="btn btn-warning" th:href="@{/profiles/{id}/(id=${user.id})}"
+                   th:text="#{table.edit}">Edit</a>
+            </td>
+            <td>
+                <form th:if="${user.id}>2" th:action="@{/profiles/delete/{id}/(id=${user.id})}" method="post">
+                    <button class="btn btn-danger" type="submit" value="Delete"
+                            th:text="#{table.delete}"></button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <hr class="mb-4"/>
+
+    <p class="lead" th:text="#{table.cantedit}">
+        Cant edit "AdminTest" and "UserTest" profile
+    </p>
+</section>
+
+<div th:replace="~{fragments/scripts}"></div>
+<script src="webjars/datatables/1.10.20/js/jquery.dataTables.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('#myTable').DataTable();
+    });
+</script>
+</body>
+</html>

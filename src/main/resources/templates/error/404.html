@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <div th:replace="~{fragments/headTag}"></div>
+</head>
+<body>
+<div class="pricing-header px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
+    <h1>404</h1>
+    <h2>Page not found</h2>
+    <br><a href="/">Home</a>
+    <br><br>
+    <div sec:authorize="isAuthenticated()">
+        <p>
+            User '<span sec:authentication="name"></span>'
+            <br>auth : <span sec:authentication="authenticated"></span>
+            <br>Role : <span sec:authentication="authorities"></span>
+            <br>Error Page : <span th:text="${#httpServletRequest.requestURL}"></span>
+        </p>
+    </div>
+</div>
+<div th:replace="~{fragments/scripts}"></div>
+</body>
+</html>

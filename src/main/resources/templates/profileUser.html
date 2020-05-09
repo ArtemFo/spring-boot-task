@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <div th:replace="~{fragments/headTag}"></div>
+    <link rel="stylesheet" href="/static/css/signin.css">
+</head>
+<body>
+<header th:replace="~{fragments/header}">
+</header>
+<section class="form-container text-center mt-n2 h-auto">
+    <div class="form-signin">
+        <div th:if="${notEditable}" th:text="#{message.notEditable}" class="alert alert-danger" role="alert">
+        </div>
+
+        <div class="py-1 text-center">
+            <h2>[[${#httpServletRequest.remoteUser}]] profile</h2>
+        </div>
+
+        <form class="text-left" th:action="@{/profileuser}" method="post" th:object="${user}">
+            <div class="my-2">
+                <label for="email" th:text="#{form.email}">Email</label>
+                <input type="email" class="form-control" id="email" th:field="*{email}" required>
+                <div th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="invalid-feedback mb-3"
+                     style="display: block">
+                </div>
+            </div>
+            <div class="my-2">
+                <label for="password" th:text="#{form.password}">Password</label>
+                <input type="password" class="form-control" id="password" th:field="*{password}" required>
+                <div th:if="${#fields.hasErrors('password')}" th:errors="*{password}" class="invalid-feedback mb-3"
+                     style="display: block">
+                </div>
+            </div>
+            <div class="my-2">
+                <label for="timezone">[[#{form.timezone}]]: [[*{timezone}]]</label>
+                <select class="custom-select d-block w-100" id="timezone" name="timezone"></select>
+            </div>
+
+            <hr class="mb-4">
+
+            <ul class="list-group">
+                <li class="list-group-item d-flex justify-content-between lh-condensed">
+                    <div>
+                        <h6 class="my-0" th:text="#{form.roles}">Roles</h6>
+                    </div>
+                    <span th:text="*{roles}" class="text-muted"></span>
+                    <ul hidden>
+                        <li class="custom-control custom-checkbox" th:each="role : ${user.roles}">
+                            <input class="custom-control-input" type="checkbox" th:field="*{roles}" th:value="${role}"/>
+                        </li>
+                    </ul>
+                </li>
+                <li class="list-group-item d-flex justify-content-between lh-condensed">
+                    <div>
+                        <h6 class="my-0" th:text="#{form.active}">Active</h6>
+                    </div>
+                    <span th:text="*{active}" class="text-muted"></span>
+                    <input type="hidden" name="active" th:value="*{active}">
+                </li>
+                <li class="list-group-item d-flex justify-content-between lh-condensed">
+                    <div>
+                        <h6 class="my-0" th:text="#{form.ip}">IP</h6>
+                    </div>
+                    <span th:text="*{ip}" class="text-muted"></span>
+                    <input type="hidden" name="ip" th:value="*{ip}">
+                </li>
+            </ul>
+
+            <input type="hidden" name="name" th:value="*{name}">
+            <input type="hidden" name="id" th:value="*{id}">
+
+            <hr class="mb-4">
+
+            <button class="btn btn-primary btn-lg btn-block" type="submit" th:text="#{btn.save}">Save</button>
+        </form>
+    </div>
+</section>
+
+<div th:replace="~{fragments/scripts}"></div>
+<script src="/static/js/timezones.min.js"></script>
+<script>
+    $(function () {
+        $('#timezone').timezones();
+    });
+</script>
+</body>
+</html>
